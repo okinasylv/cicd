@@ -15,33 +15,32 @@ jobs:
 
       - name: Building with check
         run: |
-          gcc operations.c check_operations.c -o check_operations \
-          `pkg-config --cflags --libs check`
+          gcc operations.c check_operations.c -o check_operations $(pkg-config --cflags --libs check)
 
       - name: Testing with check
         run: |
           ./check_operations
 
-    static-analysis:
-      name: Static analysis
-      runs-on: ubuntu-latest
-      steps:
-        - name: Install splint
-          run: |
-            sudo apt install splint
+  static-analysis:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install splint
+        run: |
+          sudo apt install splint
 
-        - name: Check out repository code
-          uses: actions/checkout@v4
+      - name: Check out repository code
+        uses: actions/checkout@v4
 
-        - name: Run splint
-          run: |
-            splint --compdef --exportlocal simplecalculator.c operations.c
+      - name: Run splint
+        run: |
+          splint --compdef --exportlocal simplecalculator.c operations.c
 
   building-and-delivery:
     name: Build and delivery
     permissions:
       contents: write
-    needs: [unit-test,static-analysis]
+    needs: [unit-test, static-analysis]
     runs-on: ubuntu-latest
 
     steps:
